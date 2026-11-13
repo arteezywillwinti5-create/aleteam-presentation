@@ -362,7 +362,8 @@ body {
     if (field && step.cycle) cycleWords(field, step.cycle);
     busy = false;
   }
-  const next = () => go(cur + 1), back = () => go(cur - 1, false);
+  // After the last slide the tour starts again from the first one.
+  const next = () => go(cur >= STEPS.length - 1 ? 0 : cur + 1), back = () => go(cur - 1, false);
 
   // Controls: keys, click on stage, buttons, autoplay, fullscreen.
   stage.addEventListener('keydown', e => {
@@ -381,7 +382,7 @@ body {
     if (autoTimer) { clearInterval(autoTimer); autoTimer = null; play.setAttribute('aria-pressed', 'false'); return; }
     play.setAttribute('aria-pressed', 'true');
     if (cur >= STEPS.length - 1) go(0, false);
-    autoTimer = setInterval(() => { if (busy) return; if (cur >= STEPS.length - 1) { clearInterval(autoTimer); autoTimer = null; play.setAttribute('aria-pressed', 'false'); } else next(); }, 5200);
+    autoTimer = setInterval(() => { if (!busy) next(); }, 5200);
   });
   function toggleFull() {
     const el = $('frame');
